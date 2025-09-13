@@ -64,7 +64,6 @@ export default function Arena() {
 
       // Save interview in Node backend
       const saveRes = await client.post(`/create/${userId}`, {
-        user: userId,
         ...formData,
         Questions: questions,
       });
@@ -73,7 +72,7 @@ export default function Arena() {
         state: {
           ...formData,
           questions: questions,
-          interview_id: saveRes.data._id,
+          interview_id: saveRes.data.interview._id,
         },
       });
     } catch (err) {
@@ -115,6 +114,11 @@ export default function Arena() {
       console.error("Error deleting interview:", err);
       setError("Error deleting interview. Please try again.");
     }
+  };
+
+  // 🆕 Navigate to Past Analysis Page
+  const handlePastAnalysis = (interviewId) => {
+    navigate(`/analysis/${interviewId}`);
   };
 
   return (
@@ -195,28 +199,17 @@ export default function Arena() {
                 <p className="text-sm text-gray-500 mt-3">
                   Experience: {interview.ExperienceYear} years
                 </p>
-                {console.log(interview.overallScore)}
-                {/* ✅ View past score if available */}
+
                 {interview.overallScore !== undefined && (
                   <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
                     <p className="font-semibold text-blue-700">
                       Last Score: {interview.overallScore}/10
                     </p>
-                    <button
-                      onClick={() =>
-                        alert(
-                          `Previous Score: ${interview.overallScore}/10\n\nFeedback: ${interview.overallFeedback || "No feedback available"}`
-                        )
-                      }
-                      className="mt-2 bg-indigo-500 text-white py-1 px-3 rounded-lg hover:bg-indigo-600 transition"
-                    >
-                      View Past Score
-                    </button>
                   </div>
                 )}
               </div>
 
-              <div className="flex gap-2 mt-4">
+              <div className="flex gap-2 mt-4 flex-wrap">
                 <button
                   onClick={() => handleRetake(interview)}
                   className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition"
@@ -228,6 +221,12 @@ export default function Arena() {
                   className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition"
                 >
                   Delete
+                </button>
+                <button
+                  onClick={() => handlePastAnalysis(interview._id)}
+                  className="bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600 transition"
+                >
+                  Past Analysis
                 </button>
               </div>
             </div>

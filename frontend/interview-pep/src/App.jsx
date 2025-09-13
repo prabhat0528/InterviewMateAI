@@ -8,6 +8,7 @@ import { FlashProvider } from "./context/FlashContext";
 import FlashMessage from "./pages/FlashMessage";
 import Arena from "./pages/Arena";
 import InterviewPage from "./pages/InterviewPage";
+import AnalysisPage from "./pages/AnalysisPage";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
             <Route path="/auth" element={<Authentication />} />
             <Route path = "/arena" element = {<Arena/>}/>
             <Route path="/interview" element={<InterviewPage />} />
+             <Route path="/analysis/:interviewId" element={<AnalysisPage />} />
           </Routes>
         </Router>
       </AuthProvider>
