@@ -6,7 +6,7 @@ export const AuthContext = createContext();
 
 // Axios client
 const client = axios.create({
-  baseURL: "http://localhost:8080/ai/user",
+  baseURL: "https://interviewmateai-backend.onrender.com/ai/user",
   withCredentials: true, // allows cookies (session)
 });
 

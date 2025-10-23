@@ -23,7 +23,7 @@ export default function InterviewPage() {
   );
   const [latestAttempt, setLatestAttempt] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [feedbackReady, setFeedbackReady] = useState(false); // track if AI feedback is ready
+  const [feedbackReady, setFeedbackReady] = useState(false); 
   const recognitionRef = useRef(null);
 
   const startRecording = (idx) => {
@@ -114,7 +114,7 @@ export default function InterviewPage() {
 
     try {
       await axios.post(
-        `http://localhost:8080/ai/interviews/addAttempt/${InterviewId}`,
+        `https://interviewmateai-backend.onrender.com/ai/interviews/addAttempt/${InterviewId}`,
         { attempt: latestAttempt },
         { withCredentials: true }
       );

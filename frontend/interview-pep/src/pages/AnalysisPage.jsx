@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 import axios from "axios";
 
 const client = axios.create({
-  baseURL: "http://localhost:8080/ai/interviews",
+  baseURL: "https://interviewmateai-backend.onrender.com/ai/interviews",
   withCredentials: true,
 });
 

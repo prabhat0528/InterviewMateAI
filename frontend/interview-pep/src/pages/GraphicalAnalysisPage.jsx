@@ -25,7 +25,7 @@ ChartJS.register(
 );
 
 const client = axios.create({
-  baseURL: "http://localhost:8080/ai/interviews",
+  baseURL: "https://interviewmateai-backend.onrender.com/ai/interviews",
   withCredentials: true,
 });
 
@@ -49,7 +49,7 @@ const GraphicalAnalysisPage = () => {
       }
 
       try {
-        // ✅ Fetch current interview (and its attempts)
+        //  Fetch current interview (and its attempts)
         const { data: currentInterview } = await client.get(`/analysis/${interviewId}`);
 
         if (!currentInterview) {
@@ -61,11 +61,11 @@ const GraphicalAnalysisPage = () => {
         const currentJobTitle = currentInterview.JobTitle || "Unknown Job";
         setJobTitle(currentJobTitle);
 
-        // ✅ Fetch all interviews of the current user
+        //  Fetch all interviews of the current user
         const { data: allInterviewsRes } = await client.get(`/${user.id}`);
         const allInterviews = allInterviewsRes.interviews || [];
 
-        // ✅ Flatten all attempts across interviews of the same JobTitle
+        //  Flatten all attempts across interviews of the same JobTitle
         const allAttempts = allInterviews
           .filter((i) => i.JobTitle === currentJobTitle)
           .flatMap((i) =>
@@ -84,7 +84,7 @@ const GraphicalAnalysisPage = () => {
           return;
         }
 
-        // ✅ Prepare chart labels and data points
+        //  Prepare chart labels and data points
         const labels = allAttempts.map((a) =>
           new Date(a.createdAt).toLocaleDateString("en-IN", {
             day: "numeric",
@@ -108,7 +108,7 @@ const GraphicalAnalysisPage = () => {
           ],
         });
 
-        // ✅ Average score
+       
         const average =
           allAttempts.reduce((acc, a) => acc + a.overallScore, 0) /
           allAttempts.length;

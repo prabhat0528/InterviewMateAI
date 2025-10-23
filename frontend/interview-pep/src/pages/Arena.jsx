@@ -17,7 +17,7 @@ export default function Arena() {
   const userId = user?.id;
 
   const client = axios.create({
-    baseURL: "http://localhost:8080/ai/interviews",
+    baseURL: "https://interviewmateai-backend.onrender.com/ai/interviews",
     withCredentials: true,
   });
 
