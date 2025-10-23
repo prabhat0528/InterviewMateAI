@@ -1,6 +1,6 @@
 Flask
 flask-cors
 python-dotenv
-langchain
+langchain==0.1.1
 langchain-google-genai
 typing-extensions
