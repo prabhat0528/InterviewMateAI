@@ -1,0 +1,6 @@
+Flask
+flask-cors
+python-dotenv
+langchain
+langchain-google-genai
+typing-extensions
