@@ -19,7 +19,6 @@ app.use(cors({
 }))
 
 
-
 const sessionOptions = {
   secret: process.env.SESSION_SECRET,
   resave: false,
@@ -28,8 +27,8 @@ const sessionOptions = {
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
-    sameSite: "lax", 
-    secure: false,   
+    sameSite: "none",  
+    secure: true,      //  must be true in production with HTTPS
   },
 };
 
