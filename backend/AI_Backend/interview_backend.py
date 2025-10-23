@@ -19,7 +19,7 @@ if not GEMINI_KEY:
     raise RuntimeError("Missing GEMINI_KEY in environment")
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
+CORS(app, resources={r"/*": {"origins": "https://interviewmateai.onrender.com/"}}, supports_credentials=True)
 
 llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=GEMINI_KEY)
 
