@@ -19,9 +19,9 @@ if not GEMINI_KEY:
     raise RuntimeError("Missing GEMINI_KEY in environment")
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "*"}})
+CORS(app, resources={r"/*": {"origins": "http://localhost:5173"}}, supports_credentials=True)
 
-llm = ChatGoogleGenerativeAI(model="gemini-1.5-flash", google_api_key=GEMINI_KEY)
+llm = ChatGoogleGenerativeAI(model="gemini-2.5-flash", google_api_key=GEMINI_KEY)
 
 # -----------------------------
 # Generate Questions
@@ -111,9 +111,9 @@ def evaluate_answers():
         raw = evaluate_chain.invoke({"qa_pairs": qa_pairs})
         raw_text = raw.get("text") if isinstance(raw, dict) else str(raw)
 
-        # ⚡ Strip code blocks if present
+        #  Strip code blocks if present
         if raw_text.startswith("```"):
-            raw_text = "\n".join(raw_text.split("\n")[1:-1])  # remove first and last line (```json ...```)
+            raw_text = "\n".join(raw_text.split("\n")[1:-1])  
 
         # Parse JSON
         try:

@@ -7,7 +7,7 @@ export const FlashProvider = ({ children }) => {
 
   const showFlash = (message, type = "success") => {
     setFlash({ message, type });
-    setTimeout(() => setFlash(null), 3000); // auto dismiss after 3s
+    setTimeout(() => setFlash(null), 3000); 
   };
 
   return (

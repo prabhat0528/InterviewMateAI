@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/Authcontext";
 
 export default function Landing() {
-  const { user } = useContext(AuthContext); // ✅ correctly extract user
+  const { user } = useContext(AuthContext); 
   const navigate = useNavigate();
 
   return (
@@ -13,7 +13,7 @@ export default function Landing() {
         className="relative w-full h-screen bg-cover bg-center flex items-center justify-center"
         style={{
           backgroundImage:
-            "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1950&q=80')", // ✅ better unsplash direct link
+            "url('https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1950&q=80')", 
         }}
       >
         {/* Dark overlay for readability */}
@@ -37,14 +37,14 @@ export default function Landing() {
           <div className="flex flex-col sm:flex-row justify-center gap-4">
             {user ? (
               <button
-                onClick={() => navigate("/arena")} // ✅ take logged-in users to "My Arena"
+                onClick={() => navigate("/arena")} 
                 className="px-8 py-3 rounded-full font-semibold text-white bg-gradient-to-r from-indigo-500 to-pink-600 hover:from-indigo-600 hover:to-pink-700 transition-transform transform hover:scale-105"
               >
                 My Arena
               </button>
             ) : (
               <button
-                onClick={() => navigate("/auth")} // ✅ take not-logged-in users to Auth
+                onClick={() => navigate("/auth")} 
                 className="px-8 py-3 rounded-full font-semibold text-white bg-gradient-to-r from-indigo-500 to-pink-600 hover:from-indigo-600 hover:to-pink-700 transition-transform transform hover:scale-105"
               >
                 Let's Start
@@ -55,7 +55,7 @@ export default function Landing() {
               onClick={() => navigate("/Learn-More")}
               className="px-8 py-3 rounded-full font-semibold text-indigo-200 border border-indigo-200 hover:bg-indigo-200 hover:text-gray-900 transition-colors transform hover:scale-105"
             >
-              Learn more
+              Know more
             </button>
           </div>
         </div>

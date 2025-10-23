@@ -9,6 +9,7 @@ import FlashMessage from "./pages/FlashMessage";
 import Arena from "./pages/Arena";
 import InterviewPage from "./pages/InterviewPage";
 import AnalysisPage from "./pages/AnalysisPage";
+import GraphicalAnalysisPage from "./pages/GraphicalAnalysisPage";
 
 function App() {
   return (
@@ -23,7 +24,8 @@ function App() {
             <Route path="/auth" element={<Authentication />} />
             <Route path = "/arena" element = {<Arena/>}/>
             <Route path="/interview" element={<InterviewPage />} />
-             <Route path="/analysis/:interviewId" element={<AnalysisPage />} />
+            <Route path="/analysis/:interviewId" element={<AnalysisPage />} />
+            <Route path="/graphical-analysis/:interviewId" element={<GraphicalAnalysisPage />} />
           </Routes>
         </Router>
       </AuthProvider>

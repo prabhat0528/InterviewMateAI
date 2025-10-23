@@ -84,6 +84,7 @@ export default function Arena() {
 
   const handleRetake = async (interview) => {
     try {
+      console.log(`This is Interview 'id: ${interview._id}`)
       const flaskRes = await axios.post("http://127.0.0.1:5000/generate_questions", {
         job_title: interview.JobTitle,
         topics: interview.Topics,
@@ -116,9 +117,12 @@ export default function Arena() {
     }
   };
 
-  // 🆕 Navigate to Past Analysis Page
   const handlePastAnalysis = (interviewId) => {
     navigate(`/analysis/${interviewId}`);
+  };
+
+  const handleGraphicalAnalysis = (interviewId) => {
+    navigate(`/graphical-analysis/${interviewId}`);
   };
 
   return (
@@ -199,14 +203,6 @@ export default function Arena() {
                 <p className="text-sm text-gray-500 mt-3">
                   Experience: {interview.ExperienceYear} years
                 </p>
-
-                {interview.overallScore !== undefined && (
-                  <div className="mt-4 p-3 bg-gray-50 rounded-lg border">
-                    <p className="font-semibold text-blue-700">
-                      Last Score: {interview.overallScore}/10
-                    </p>
-                  </div>
-                )}
               </div>
 
               <div className="flex gap-2 mt-4 flex-wrap">
@@ -227,6 +223,12 @@ export default function Arena() {
                   className="bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600 transition"
                 >
                   Past Analysis
+                </button>
+                <button
+                  onClick={() => handleGraphicalAnalysis(interview._id)}
+                  className="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition"
+                >
+                  View Graphical Analysis
                 </button>
               </div>
             </div>

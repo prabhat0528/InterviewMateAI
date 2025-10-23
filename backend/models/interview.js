@@ -1,41 +1,26 @@
 const mongoose = require("mongoose");
 
-const answerSchema = new mongoose.Schema({
-  question: { type: String, required: true },
-  description: { type: String }, // why this question is asked
-  userAnswer: { type: String },  // transcribed answer
-  feedback: { type: String },    // AI feedback for this answer
-  relevanceScore: { type: Number, min: 0, max: 10 },
-  grammarScore: { type: Number, min: 0, max: 10 },
+const perAnswerSchema = new mongoose.Schema({
+  question: String,
+  userAnswer: String,
+  feedback: String,
+  relevanceScore: Number,
+  grammarScore: Number,
 });
 
-const interviewSchema = new mongoose.Schema(
-  {
-    JobTitle: {
-      type: String,
-      required: true,
-    },
-    Topics: {
-      type: String,
-      required: true,
-    },
-    ExperienceYear: {
-      type: Number,
-      required: true,
-    },
-    Questions: [answerSchema], // list of Q&A with AI feedback
-    overallFeedback: { type: String },
-    overallScore: { type: Number, min: 0, max: 10 },
+const attemptSchema = new mongoose.Schema({
+  overallFeedback: String,
+  overallScore: Number,
+  perAnswer: [perAnswerSchema],
+  createdAt: { type: Date, default: Date.now },
+});
 
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-  },
-  { timestamps: true }
-);
+const interviewSchema = new mongoose.Schema({
+  JobTitle: String,
+  Topics: String,
+  ExperienceYear: Number,
+  user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  attempts: [attemptSchema],
+}, { timestamps: true });
 
-const InterviewModel = mongoose.model("InterviewModel", interviewSchema);
-
-module.exports = InterviewModel;
+module.exports = mongoose.model("InterviewModel", interviewSchema);

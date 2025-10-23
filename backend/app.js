@@ -28,8 +28,8 @@ const sessionOptions = {
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     httpOnly: true,
-    sameSite: "lax", // use lax for localhost
-    secure: false,   // set true only in production with https
+    sameSite: "lax", 
+    secure: false,   
   },
 };
 
