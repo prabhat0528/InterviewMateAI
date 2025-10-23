@@ -26,9 +26,9 @@ const sessionOptions = {
   store: MongoStore.create({ mongoUrl: process.env.MONGO_URL }),
   cookie: {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    httpOnly: true,
-    sameSite: "none",  
-    secure: true,      //  must be true in production with HTTPS
+    // httpOnly: true,
+    // sameSite: "none",  
+    // secure: true,      //  must be true in production with HTTPS
   },
 };
 
