@@ -76,7 +76,7 @@ export default function InterviewPage() {
 
     try {
       const res = await axios.post(
-        "http://127.0.0.1:5000/evaluate_answers",
+        "https://interviewmateai-python.onrender.com/evaluate_answers",
         { questions: Questions, answers: transcriptions },
         { withCredentials: true }
       );

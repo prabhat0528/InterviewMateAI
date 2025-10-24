@@ -85,7 +85,7 @@ export default function Arena() {
   const handleRetake = async (interview) => {
     try {
       console.log(`This is Interview 'id: ${interview._id}`)
-      const flaskRes = await axios.post("http://127.0.0.1:5000/generate_questions", {
+      const flaskRes = await axios.post("https://interviewmateai-python.onrender.com/generate_questions", {
         job_title: interview.JobTitle,
         topics: interview.Topics,
         experience_year: interview.ExperienceYear,
