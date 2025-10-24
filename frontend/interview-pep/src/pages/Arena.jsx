@@ -54,7 +54,7 @@ export default function Arena() {
 
     try {
       // Call Flask backend for structured questions
-      const flaskRes = await axios.post("http://127.0.0.1:5000/generate_questions", {
+      const flaskRes = await axios.post("https://interviewmateai-python.onrender.com/generate_questions", {
         job_title: formData.JobTitle,
         topics: formData.Topics,
         experience_year: formData.ExperienceYear,
