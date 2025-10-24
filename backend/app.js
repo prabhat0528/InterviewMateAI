@@ -16,6 +16,8 @@ const app = express();
 app.use(cors({
     origin: "https://interviewmateai.onrender.com",
     credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }))
 
 
