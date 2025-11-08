@@ -4,12 +4,13 @@ import { FlashContext } from "../context/FlashContext";
 import { useNavigate } from "react-router-dom";
 
 export default function Authentication() {
-  const { signup, login , user} = useContext(AuthContext);
+  const { signup, login, user } = useContext(AuthContext);
   const { showFlash } = useContext(FlashContext);
   const navigate = useNavigate();
 
   const [isSignup, setIsSignup] = useState(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [loading, setLoading] = useState(false); // ✅ new loading state
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,24 +19,31 @@ export default function Authentication() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (isSignup) {
-      const result = await signup(form.name, form.email, form.password);
-      if (result.success) {
-        showFlash(`Signup successful 🎉, Welcome ${result.response.data.user.name}`, "success");
-        navigate("/");
+    setLoading(true); // ✅ Start loading before async call
+
+    try {
+      if (isSignup) {
+        const result = await signup(form.name, form.email, form.password);
+        if (result.success) {
+          showFlash(`Signup successful 🎉, Welcome ${result.response.data.user.name}`, "success");
+          navigate("/");
+        } else {
+          showFlash(result.message || "Signup failed ❌", "error");
+        }
       } else {
-        showFlash(result.message || "Signup failed ❌", "error");
+        const result = await login(form.email, form.password);
+        if (result.success) {
+          showFlash(`Login successful 🎉, Welcome ${result.response.data.user.name}`, "success");
+          navigate("/");
+        } else {
+          showFlash(result.message || "Login failed ❌", "error");
+        }
       }
-    } else {
-      const result = await login(form.email, form.password);
-      if (result.success) {
-        showFlash(`Login successful 🎉, Welcome ${result.response.data.user.name}`, "success");
-        console.log(result);
-        //console.log("Flash shown");
-        navigate("/");
-      } else {
-        showFlash(result.message || "Login failed ❌", "error");
-      }
+    } catch (error) {
+      console.error(error);
+      showFlash("Something went wrong. Please try again.", "error");
+    } finally {
+      setLoading(false); // ✅ Stop loading after async call
     }
   };
 
@@ -83,9 +91,20 @@ export default function Authentication() {
 
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600"
+          disabled={loading} // ✅ Disable button when loading
+          className={`w-full text-white p-2 rounded-lg transition-all ${
+            loading
+              ? "bg-gray-400 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-600"
+          }`}
         >
-          {isSignup ? "Sign Up" : "Login"}
+          {loading
+            ? isSignup
+              ? "Signing Up..."
+              : "Logging In..."
+            : isSignup
+            ? "Sign Up"
+            : "Login"}
         </button>
 
         <p className="mt-4 text-sm">
