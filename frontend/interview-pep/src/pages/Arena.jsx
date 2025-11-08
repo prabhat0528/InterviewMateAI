@@ -12,6 +12,8 @@ export default function Arena() {
   });
   const [interviews, setInterviews] = useState([]);
   const [error, setError] = useState(null);
+  const [loadingBtn, setLoadingBtn] = useState({}); // track button-specific loading
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const userId = user?.id;
@@ -46,14 +48,15 @@ export default function Arena() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setIsSubmitting(true);
 
     if (!userId) {
       setError("You must be logged in to create an interview.");
+      setIsSubmitting(false);
       return;
     }
 
     try {
-      // Call Flask backend for structured questions
       const flaskRes = await axios.post("https://interviewmateai-python.onrender.com/generate_questions", {
         job_title: formData.JobTitle,
         topics: formData.Topics,
@@ -62,7 +65,6 @@ export default function Arena() {
 
       const questions = flaskRes.data.questions;
 
-      // Save interview in Node backend
       const saveRes = await client.post(`/create/${userId}`, {
         ...formData,
         Questions: questions,
@@ -79,12 +81,14 @@ export default function Arena() {
       console.error("Error generating interview questions:", err);
       const errorMsg = err.response?.data?.message || "Error generating interview questions. Please try again.";
       setError(errorMsg);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleRetake = async (interview) => {
+    setLoadingBtn((prev) => ({ ...prev, [interview._id]: "retake" }));
     try {
-      console.log(`This is Interview 'id: ${interview._id}`)
       const flaskRes = await axios.post("https://interviewmateai-python.onrender.com/generate_questions", {
         job_title: interview.JobTitle,
         topics: interview.Topics,
@@ -102,11 +106,14 @@ export default function Arena() {
     } catch (err) {
       console.error("Error regenerating questions:", err);
       alert("Failed to fetch questions");
+    } finally {
+      setLoadingBtn((prev) => ({ ...prev, [interview._id]: null }));
     }
   };
 
   const handleDelete = async (interviewId) => {
     if (!window.confirm("Are you sure you want to delete this interview?")) return;
+    setLoadingBtn((prev) => ({ ...prev, [interviewId]: "delete" }));
     try {
       await client.delete(`/delete/${userId}/${interviewId}`);
       setInterviews(interviews.filter((i) => i._id !== interviewId));
@@ -114,15 +121,27 @@ export default function Arena() {
     } catch (err) {
       console.error("Error deleting interview:", err);
       setError("Error deleting interview. Please try again.");
+    } finally {
+      setLoadingBtn((prev) => ({ ...prev, [interviewId]: null }));
     }
   };
 
-  const handlePastAnalysis = (interviewId) => {
-    navigate(`/analysis/${interviewId}`);
+  const handlePastAnalysis = async (interviewId) => {
+    setLoadingBtn((prev) => ({ ...prev, [interviewId]: "past" }));
+    try {
+      navigate(`/analysis/${interviewId}`);
+    } finally {
+      setLoadingBtn((prev) => ({ ...prev, [interviewId]: null }));
+    }
   };
 
-  const handleGraphicalAnalysis = (interviewId) => {
-    navigate(`/graphical-analysis/${interviewId}`);
+  const handleGraphicalAnalysis = async (interviewId) => {
+    setLoadingBtn((prev) => ({ ...prev, [interviewId]: "graphical" }));
+    try {
+      navigate(`/graphical-analysis/${interviewId}`);
+    } finally {
+      setLoadingBtn((prev) => ({ ...prev, [interviewId]: null }));
+    }
   };
 
   return (
@@ -181,58 +200,87 @@ export default function Arena() {
 
           <button
             type="submit"
-            className="w-full bg-green-600 text-white py-2 rounded-lg hover:bg-green-700 transition"
+            disabled={isSubmitting}
+            className={`w-full ${
+              isSubmitting ? "bg-green-400" : "bg-green-600 hover:bg-green-700"
+            } text-white py-2 rounded-lg transition`}
           >
-            Go
+            {isSubmitting ? "Loading..." : "Go"}
           </button>
         </form>
       )}
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {interviews.length > 0 ? (
-          interviews.map((interview) => (
-            <div
-              key={interview._id}
-              className="bg-white p-5 rounded-xl shadow-md border hover:shadow-lg transition flex flex-col justify-between"
-            >
-              <div>
-                <h3 className="text-lg font-bold">{interview.JobTitle}</h3>
-                <p className="text-gray-600 mt-2 line-clamp-3">
-                  <b>Topics: </b> {interview.Topics}
-                </p>
-                <p className="text-sm text-gray-500 mt-3">
-                  Experience: {interview.ExperienceYear} years
-                </p>
-              </div>
+          interviews.map((interview) => {
+            const currentLoading = loadingBtn[interview._id];
+            return (
+              <div
+                key={interview._id}
+                className="bg-white p-5 rounded-xl shadow-md border hover:shadow-lg transition flex flex-col justify-between"
+              >
+                <div>
+                  <h3 className="text-lg font-bold">{interview.JobTitle}</h3>
+                  <p className="text-gray-600 mt-2 line-clamp-3">
+                    <b>Topics: </b> {interview.Topics}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-3">
+                    Experience: {interview.ExperienceYear} years
+                  </p>
+                </div>
 
-              <div className="flex gap-2 mt-4 flex-wrap">
-                <button
-                  onClick={() => handleRetake(interview)}
-                  className="bg-green-500 text-white py-2 px-4 rounded-lg hover:bg-green-600 transition"
-                >
-                  Retake
-                </button>
-                <button
-                  onClick={() => handleDelete(interview._id)}
-                  className="bg-red-500 text-white py-2 px-4 rounded-lg hover:bg-red-600 transition"
-                >
-                  Delete
-                </button>
-                <button
-                  onClick={() => handlePastAnalysis(interview._id)}
-                  className="bg-indigo-500 text-white py-2 px-4 rounded-lg hover:bg-indigo-600 transition"
-                >
-                  Past Analysis
-                </button>
-                <button
-                  onClick={() => handleGraphicalAnalysis(interview._id)}
-                  className="bg-purple-500 text-white py-2 px-4 rounded-lg hover:bg-purple-600 transition"
-                >
-                  View Graphical Analysis
-                </button>
+                <div className="flex gap-2 mt-4 flex-wrap">
+                  <button
+                    onClick={() => handleRetake(interview)}
+                    disabled={currentLoading === "retake"}
+                    className={`${
+                      currentLoading === "retake"
+                        ? "bg-green-400 cursor-not-allowed"
+                        : "bg-green-500 hover:bg-green-600"
+                    } text-white py-2 px-4 rounded-lg transition`}
+                  >
+                    {currentLoading === "retake" ? "Loading..." : "Retake"}
+                  </button>
+
+                  <button
+                    onClick={() => handleDelete(interview._id)}
+                    disabled={currentLoading === "delete"}
+                    className={`${
+                      currentLoading === "delete"
+                        ? "bg-red-400 cursor-not-allowed"
+                        : "bg-red-500 hover:bg-red-600"
+                    } text-white py-2 px-4 rounded-lg transition`}
+                  >
+                    {currentLoading === "delete" ? "Deleting..." : "Delete"}
+                  </button>
+
+                  <button
+                    onClick={() => handlePastAnalysis(interview._id)}
+                    disabled={currentLoading === "past"}
+                    className={`${
+                      currentLoading === "past"
+                        ? "bg-indigo-400 cursor-not-allowed"
+                        : "bg-indigo-500 hover:bg-indigo-600"
+                    } text-white py-2 px-4 rounded-lg transition`}
+                  >
+                    {currentLoading === "past" ? "Loading..." : "Past Analysis"}
+                  </button>
+
+                  <button
+                    onClick={() => handleGraphicalAnalysis(interview._id)}
+                    disabled={currentLoading === "graphical"}
+                    className={`${
+                      currentLoading === "graphical"
+                        ? "bg-purple-400 cursor-not-allowed"
+                        : "bg-purple-500 hover:bg-purple-600"
+                    } text-white py-2 px-4 rounded-lg transition`}
+                  >
+                    {currentLoading === "graphical" ? "Loading..." : "View Graphical Analysis"}
+                  </button>
+                </div>
               </div>
-            </div>
-          ))
+            );
+          })
         ) : (
           <p className="text-gray-600 text-center col-span-full">
             No interviews yet. Click + to create one.
